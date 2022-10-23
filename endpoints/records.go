@@ -29,10 +29,20 @@ func Records(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// RecordsByUser represents endpoints from route /records/user/
 func RecordsByUser(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		//
+		RecordsGetByUser(w, r)
+		break
+	}
+}
+
+// RecordsByUserCategory represents endpoints from route /records/user/category
+func RecordsByUserCategory(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		RecordsGetByUserCategory(w, r)
 		break
 	}
 }

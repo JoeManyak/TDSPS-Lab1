@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	//something like healthcheck
 	http.HandleFunc("/", endpoints.Greeting)
 
 	//endpoint to get access to one user
@@ -18,6 +19,15 @@ func main() {
 	http.HandleFunc("/category/", endpoints.Category)
 	//endpoint to get access to list of categories
 	http.HandleFunc("/categories/", endpoints.Categories)
+
+	//endpoint to get access to one record
+	http.HandleFunc("/record/", endpoints.Record)
+	//endpoint to get access to full list of record
+	http.HandleFunc("/records/", endpoints.Records)
+	//endpoint to get access to full list of record filtered by user id
+	http.HandleFunc("/records/user", endpoints.RecordsByUser)
+	//endpoint to get access to full list of record filtered by user id and category id
+	http.HandleFunc("/records/user", endpoints.RecordsByUserCategory)
 
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
