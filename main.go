@@ -27,7 +27,7 @@ func main() {
 	//endpoint to get access to full list of record filtered by user id
 	http.HandleFunc("/records/user", endpoints.RecordsByUser)
 	//endpoint to get access to full list of record filtered by user id and category id
-	http.HandleFunc("/records/user", endpoints.RecordsByUserCategory)
+	http.HandleFunc("/records/user/category", endpoints.RecordsByUserCategory)
 
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {

@@ -12,6 +12,10 @@ type Category struct {
 	Name string
 }
 
+func init() {
+	categories = make([]Category, 0, 10)
+}
+
 func Create(name string) {
 	categories = append(categories, Category{
 		ID:   idCount,

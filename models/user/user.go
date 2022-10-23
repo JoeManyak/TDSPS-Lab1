@@ -12,6 +12,10 @@ type User struct {
 	Name string
 }
 
+func init() {
+	users = make([]User, 0, 10)
+}
+
 func Create(name string) {
 	users = append(users, User{
 		ID:   idCount,

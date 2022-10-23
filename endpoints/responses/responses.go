@@ -16,7 +16,7 @@ func NoContent(w http.ResponseWriter) {
 }
 
 func Internal(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusNoContent)
+	w.WriteHeader(http.StatusInternalServerError)
 	_, err := w.Write([]byte(""))
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -25,8 +25,17 @@ func Internal(w http.ResponseWriter) {
 }
 
 func Unprocessable(w http.ResponseWriter, structName string) {
-	w.WriteHeader(http.StatusNoContent)
+	w.WriteHeader(http.StatusUnprocessableEntity)
 	_, err := w.Write([]byte(fmt.Sprintf("provided %s is invalid", structName)))
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+}
+
+func UnprocessableDetailed(w http.ResponseWriter, structName string, additional string) {
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	_, err := w.Write([]byte(fmt.Sprintf("provided %s is invalid: %s", structName, additional)))
 	if err != nil {
 		log.Fatalln(err.Error())
 		return
@@ -43,7 +52,7 @@ func Unprocessable(w http.ResponseWriter, structName string) {
 //}
 
 func BadRequest(w http.ResponseWriter, errorStr error) {
-	w.WriteHeader(http.StatusNoContent)
+	w.WriteHeader(http.StatusBadRequest)
 	_, err := w.Write([]byte(errorStr.Error()))
 	if err != nil {
 		log.Fatalln(err.Error())

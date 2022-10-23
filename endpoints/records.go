@@ -54,10 +54,16 @@ func RecordCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var c models.Record
-	err = json.Unmarshal(body, &c)
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
 	if err != nil {
-		responses.Unprocessable(w, user.StructName)
+		responses.Unprocessable(w, models.StructName)
+		return
+	}
+
+	c, err := models.Parse(data)
+	if err != nil {
+		responses.UnprocessableDetailed(w, models.StructName, err.Error())
 		return
 	}
 
