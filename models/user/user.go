@@ -5,7 +5,7 @@ import le "lab1/local-errors"
 var idCount = 0
 var users []User
 
-const structName = "user"
+const StructName = "user"
 
 type User struct {
 	ID   int
@@ -30,5 +30,5 @@ func GetByID(id int) (User, error) {
 			return users[i], nil
 		}
 	}
-	return User{}, le.NotFound(structName)
+	return User{}, le.NotFound(StructName)
 }

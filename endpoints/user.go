@@ -30,14 +30,14 @@ func Users(w http.ResponseWriter, r *http.Request) {
 func UserCreate(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		responses.Internal(w)
 		return
 	}
 
 	var u user.User
 	err = json.Unmarshal(body, &u)
 	if err != nil {
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		responses.Unprocessable(w, user.StructName)
 		return
 	}
 

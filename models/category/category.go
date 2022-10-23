@@ -5,7 +5,7 @@ import le "lab1/local-errors"
 var idCount = 0
 var categories []Category
 
-const structName = "category"
+const StructName = "category"
 
 type Category struct {
 	ID   int
@@ -30,5 +30,5 @@ func GetByID(id int) (Category, error) {
 			return categories[i], nil
 		}
 	}
-	return Category{}, le.NotFound(structName)
+	return Category{}, le.NotFound(StructName)
 }
