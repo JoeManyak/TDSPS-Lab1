@@ -14,9 +14,9 @@ func main() {
 	//endpoint to get access to list of users
 	http.HandleFunc("/users/", endpoints.Users)
 
-	//endpoint to get access to one user
+	//endpoint to get access to one category
 	http.HandleFunc("/category/", endpoints.Category)
-	//endpoint to get access to list of users
+	//endpoint to get access to list of categories
 	http.HandleFunc("/categories/", endpoints.Categories)
 
 	err := http.ListenAndServe(":3000", nil)

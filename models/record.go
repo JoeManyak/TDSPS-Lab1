@@ -10,11 +10,11 @@ var idCount = 0
 var records []Record
 
 type Record struct {
-	ID         int
-	UserID     int
-	CategoryID int
-	Timestamp  time.Time
-	Sum        float64
+	ID         int       `json:"id"`
+	UserID     int       `json:"user_id"`
+	CategoryID int       `json:"category_id"`
+	Timestamp  time.Time `json:"timestamp"`
+	Sum        float64   `json:"sum"`
 }
 
 func Create(userID int, categoryID int, now time.Time, sum float64) error {
@@ -37,6 +37,10 @@ func Create(userID int, categoryID int, now time.Time, sum float64) error {
 	})
 	idCount++
 	return nil
+}
+
+func GetAll() []Record {
+	return records
 }
 
 func GetByUser(id int) []Record {
