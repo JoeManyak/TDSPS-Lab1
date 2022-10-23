@@ -4,49 +4,50 @@ import (
 	"encoding/json"
 	"io"
 	"lab1/endpoints/responses"
+	"lab1/models/category"
 	"lab1/models/user"
 	"log"
 	"net/http"
 )
 
-// User represents endpoints from route /user/
-func User(w http.ResponseWriter, r *http.Request) {
+// Category represents endpoints from route /category/
+func Category(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		UserCreate(w, r)
+		CategoryCreate(w, r)
 		break
 	}
 }
 
-// Users represents endpoints from route /users/
-func Users(w http.ResponseWriter, r *http.Request) {
+// Categories represents endpoints from route /categories/
+func Categories(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		UsersGet(w, r)
+		CategoriesGet(w, r)
 		break
 	}
 }
 
-func UserCreate(w http.ResponseWriter, r *http.Request) {
+func CategoryCreate(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Internal(w)
 		return
 	}
 
-	var u user.User
-	err = json.Unmarshal(body, &u)
+	var c category.Category
+	err = json.Unmarshal(body, &c)
 	if err != nil {
 		responses.Unprocessable(w, user.StructName)
 		return
 	}
 
-	user.Create(u.Name)
+	category.Create(c.Name)
 	responses.NoContent(w)
 }
 
-func UsersGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(user.GetAll())
+func CategoriesGet(w http.ResponseWriter, _ *http.Request) {
+	data, err := json.Marshal(category.GetAll())
 	if err != nil {
 		responses.Internal(w)
 		return
