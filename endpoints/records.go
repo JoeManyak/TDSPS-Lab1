@@ -17,6 +17,8 @@ func Record(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		RecordCreate(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 
@@ -26,6 +28,8 @@ func Records(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		RecordsGet(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 
@@ -35,7 +39,10 @@ func RecordsByUser(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		RecordsGetByUser(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
+
 }
 
 // RecordsByUserCategory represents endpoints from route /records/user/category
@@ -44,6 +51,8 @@ func RecordsByUserCategory(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		RecordsGetByUserCategory(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 
@@ -102,13 +111,13 @@ func RecordsGetByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, ok := request["user_id"].(int)
+	id, ok := request["user_id"].(float64)
 	if !ok {
 		responses.Unprocessable(w, "user_id")
 		return
 	}
 
-	users := models.GetByUser(id)
+	users := models.GetByUser(int(id))
 	data, err := json.Marshal(users)
 	if err != nil {
 		responses.Internal(w)
@@ -135,19 +144,19 @@ func RecordsGetByUserCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := request["user_id"].(int)
+	userID, ok := request["user_id"].(float64)
 	if !ok {
 		responses.Unprocessable(w, "user_id")
 		return
 	}
 
-	categoryID, ok := request["category_id"].(int)
+	categoryID, ok := request["category_id"].(float64)
 	if !ok {
 		responses.Unprocessable(w, "category_id")
 		return
 	}
 
-	users := models.GetByUserAndCategory(userID, categoryID)
+	users := models.GetByUserAndCategory(int(userID), int(categoryID))
 	if err != nil {
 		responses.Unprocessable(w, user.StructName)
 		return

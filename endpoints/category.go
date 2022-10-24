@@ -16,6 +16,8 @@ func Category(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		CategoryCreate(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 
@@ -25,6 +27,8 @@ func Categories(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		CategoriesGet(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 

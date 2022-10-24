@@ -15,6 +15,8 @@ func User(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		UserCreate(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 
@@ -24,6 +26,8 @@ func Users(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		UsersGet(w, r)
 		break
+	default:
+		HandleNotFound(w, r)
 	}
 }
 
