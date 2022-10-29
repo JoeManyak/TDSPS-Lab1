@@ -42,14 +42,14 @@ func UnprocessableDetailed(w http.ResponseWriter, structName string, additional 
 	}
 }
 
-//func NotFound(w http.ResponseWriter, structName string) {
-//	w.WriteHeader(http.StatusNotFound)
-//	_, err := w.Write([]byte(fmt.Sprintf("%s not found", structName)))
-//	if err != nil {
-//		log.Fatalln(err.Error())
-//		return
-//	}
-//}
+func NotFound(w http.ResponseWriter, errGet error) {
+	w.WriteHeader(http.StatusNotFound)
+	_, err := w.Write([]byte(errGet.Error()))
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+}
 
 func BadRequest(w http.ResponseWriter, errorStr error) {
 	w.WriteHeader(http.StatusBadRequest)

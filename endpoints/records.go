@@ -2,8 +2,10 @@ package endpoints
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"lab1/endpoints/responses"
+	le "lab1/local-errors"
 	"lab1/models"
 	"lab1/models/user"
 	"log"
@@ -78,6 +80,10 @@ func RecordCreate(w http.ResponseWriter, r *http.Request) {
 
 	err = models.Create(c.UserID, c.CategoryID, time.Now(), c.Sum)
 	if err != nil {
+		if errors.Is(err, le.NotFoundError) {
+			responses.NotFound(w, err)
+			return
+		}
 		responses.BadRequest(w, err)
 		return
 	}

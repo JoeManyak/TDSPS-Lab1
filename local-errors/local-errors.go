@@ -5,16 +5,16 @@ import (
 	"fmt"
 )
 
+var NotFoundError = errors.New("object not found")
+
 func NotFound(structName string) error {
-	return errors.New(
-		fmt.Sprintf("error, object not found: %s", structName),
+	return fmt.Errorf(
+		"error, %w: %s", NotFoundError, structName,
 	)
 }
 
 func NoField(fieldName string) error {
-	return errors.New(fmt.Sprintf("no field: %s", fieldName))
-}
-
-func Invalid(fieldName string) error {
-	return errors.New(fmt.Sprintf("invalid field: %s", fieldName))
+	return fmt.Errorf(
+		"no field: %s", fieldName,
+	)
 }
