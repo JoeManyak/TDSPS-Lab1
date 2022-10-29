@@ -4,9 +4,15 @@ import (
 	"lab1/endpoints"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
 	//something like healthcheck
 	http.HandleFunc("/", endpoints.Greeting)
 
@@ -29,7 +35,7 @@ func main() {
 	//endpoint to get access to full list of record filtered by user id and category id
 	http.HandleFunc("/records/user/category", endpoints.RecordsByUserCategory)
 
-	err := http.ListenAndServe(":3000", nil)
+	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
