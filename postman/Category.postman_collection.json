@@ -1,0 +1,55 @@
+{
+	"info": {
+		"_postman_id": "795ba065-e614-4209-a7c1-fd2700c7aabd",
+		"name": "Category",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14850370"
+	},
+	"item": [
+		{
+			"name": "categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/categories/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"categories",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"test-category-name\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

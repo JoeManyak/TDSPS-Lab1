@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "4b2262d5-2361-477c-b216-df810c208af7",
+		"name": "Records",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14850370"
+	},
+	"item": [
+		{
+			"name": "records",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/records/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"records",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "records by user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/records/user/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"records",
+						"user",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "records by user and category",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 0,\n    \"category_id\":1 \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/records/user/category",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"records",
+						"user",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "record",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"record\",\n    \"user_id\": 0,\n    \"category_id\": 0,\n    \"sum\": 200\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/record/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"record",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
