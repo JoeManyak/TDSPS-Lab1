@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: ./main
+  web: ./tdsps-lab1_api
