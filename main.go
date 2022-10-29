@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"lab1/endpoints"
 	"log"
 	"net/http"
@@ -35,6 +36,7 @@ func main() {
 	//endpoint to get access to full list of record filtered by user id and category id
 	http.HandleFunc("/records/user/category", endpoints.RecordsByUserCategory)
 
+	fmt.Printf("Starting server at port: %s\n", port)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatalln(err.Error())
