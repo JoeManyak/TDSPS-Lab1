@@ -1,12 +1,12 @@
 package category
 
 import (
-	le "lab1/local-errors"
+	"errors"
+	"fmt"
+	"gorm.io/gorm"
+	"lab1/db"
 	"lab1/models/record"
 )
-
-var idCount = 0
-var categories []Category
 
 const StructName = "category"
 
@@ -17,27 +17,54 @@ type Category struct {
 	CreatedBy int             `gorm:"default:null"`
 }
 
-func init() {
-	categories = make([]Category, 0, 10)
-}
-
-func Create(name string) {
-	categories = append(categories, Category{
-		ID:   idCount,
-		Name: name,
-	})
-	idCount++
-}
-
-func GetAll() []Category {
-	return categories
-}
-
-func GetByID(id int) (Category, error) {
-	for i := range categories {
-		if categories[i].ID == id {
-			return categories[i], nil
-		}
+func Create(name string, id int) (Category, error) {
+	connect, err := db.Connect()
+	if err != nil {
+		return Category{}, fmt.Errorf("create category on connect: %w", err)
 	}
-	return Category{}, le.NotFound(StructName)
+
+	c := Category{
+		Name:      name,
+		CreatedBy: id,
+	}
+
+	tx := connect.Create(&c)
+	if tx.Error != nil {
+		return Category{}, fmt.Errorf("create category: %w", tx.Error)
+	}
+
+	return c, nil
+}
+
+func GetAll() ([]Category, error) {
+	var result []Category
+
+	connect, err := db.Connect()
+	if err != nil {
+		return nil, fmt.Errorf("get categories on connect: %w", err)
+	}
+
+	tx := connect.Model(Category{}).Find(&result)
+	if tx.Error != nil {
+		return nil, fmt.Errorf("get categories: %w", err)
+	}
+
+	return result, nil
+}
+
+var ForbiddenCategory = errors.New("cannot use such category")
+
+func CheckCategory(connect *gorm.DB, userID, categoryID int) bool {
+	var c Category
+
+	tx := connect.
+		Model(&Category{}).
+		Where("id = ? AND (created_by = ? OR created_by = NULL)", categoryID, userID).
+		Find(&c)
+
+	if c.ID != categoryID || tx.Error != nil {
+		return false
+	}
+
+	return true
 }

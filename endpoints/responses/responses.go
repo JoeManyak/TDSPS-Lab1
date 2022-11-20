@@ -6,6 +6,15 @@ import (
 	"net/http"
 )
 
+func OK(w http.ResponseWriter, data []byte) {
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write(data)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+}
+
 func NoContent(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNoContent)
 	_, err := w.Write([]byte(""))

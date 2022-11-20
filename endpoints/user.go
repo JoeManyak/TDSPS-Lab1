@@ -50,7 +50,14 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		responses.BadRequest(w, err)
 		return
 	}
-	responses.NoContent(w)
+
+	uRaw, err := json.Marshal(u)
+	if err != nil {
+		responses.Internal(w)
+		return
+	}
+
+	responses.OK(w, uRaw)
 }
 
 func UsersGet(w http.ResponseWriter, _ *http.Request) {
