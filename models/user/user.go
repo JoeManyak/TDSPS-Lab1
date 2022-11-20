@@ -1,6 +1,10 @@
 package user
 
-import le "lab1/local-errors"
+import (
+	le "lab1/local-errors"
+	"lab1/models/category"
+	"lab1/models/record"
+)
 
 var idCount = 0
 var users []User
@@ -8,8 +12,10 @@ var users []User
 const StructName = "user"
 
 type User struct {
-	ID   int
-	Name string
+	ID         int `gorm:"primaryKey"`
+	Name       string
+	Records    []record.Record     `gorm:"foreignKey:UserID"`
+	Categories []category.Category `gorm:"foreignKey:CreatedBy"`
 }
 
 func init() {

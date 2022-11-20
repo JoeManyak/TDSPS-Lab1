@@ -1,9 +1,7 @@
-package models
+package record
 
 import (
 	le "lab1/local-errors"
-	"lab1/models/category"
-	"lab1/models/user"
 	"time"
 )
 
@@ -13,11 +11,11 @@ var records []Record
 const StructName = "record"
 
 type Record struct {
-	ID         int       `json:"id"`
-	UserID     int       `json:"user_id"`
-	CategoryID int       `json:"category_id"`
-	Timestamp  time.Time `json:"timestamp"`
-	Sum        float64   `json:"sum"`
+	ID         int `gorm:"primaryKey"`
+	UserID     int
+	CategoryID int
+	Timestamp  time.Time
+	Sum        float64
 }
 
 func init() {
@@ -46,16 +44,6 @@ func Parse(data map[string]interface{}) (Record, error) {
 }
 
 func Create(userID int, categoryID int, now time.Time, sum float64) error {
-	_, err := user.GetByID(userID)
-	if err != nil {
-		return err
-	}
-
-	_, err = category.GetByID(categoryID)
-	if err != nil {
-		return err
-	}
-
 	records = append(records, Record{
 		ID:         idCount,
 		UserID:     userID,

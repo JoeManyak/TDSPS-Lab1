@@ -1,6 +1,9 @@
 package category
 
-import le "lab1/local-errors"
+import (
+	le "lab1/local-errors"
+	"lab1/models/record"
+)
 
 var idCount = 0
 var categories []Category
@@ -8,8 +11,10 @@ var categories []Category
 const StructName = "category"
 
 type Category struct {
-	ID   int
-	Name string
+	ID        int `gorm:"primaryKey"`
+	Name      string
+	Records   []record.Record `gorm:"foreignKey:CategoryID"`
+	CreatedBy int
 }
 
 func init() {

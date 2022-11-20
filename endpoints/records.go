@@ -6,7 +6,7 @@ import (
 	"io"
 	"lab1/endpoints/responses"
 	le "lab1/local-errors"
-	"lab1/models"
+	"lab1/models/record"
 	"lab1/models/user"
 	"log"
 	"net/http"
@@ -68,17 +68,17 @@ func RecordCreate(w http.ResponseWriter, r *http.Request) {
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		responses.Unprocessable(w, models.StructName)
+		responses.Unprocessable(w, record.StructName)
 		return
 	}
 
-	c, err := models.Parse(data)
+	c, err := record.Parse(data)
 	if err != nil {
-		responses.UnprocessableDetailed(w, models.StructName, err.Error())
+		responses.UnprocessableDetailed(w, record.StructName, err.Error())
 		return
 	}
 
-	err = models.Create(c.UserID, c.CategoryID, time.Now(), c.Sum)
+	err = record.Create(c.UserID, c.CategoryID, time.Now(), c.Sum)
 	if err != nil {
 		if errors.Is(err, le.NotFoundError) {
 			responses.NotFound(w, err)
@@ -91,7 +91,7 @@ func RecordCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecordsGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(models.GetAll())
+	data, err := json.Marshal(record.GetAll())
 	if err != nil {
 		responses.Internal(w)
 		return
@@ -123,7 +123,7 @@ func RecordsGetByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := models.GetByUser(int(id))
+	users := record.GetByUser(int(id))
 	data, err := json.Marshal(users)
 	if err != nil {
 		responses.Internal(w)
@@ -162,7 +162,7 @@ func RecordsGetByUserCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := models.GetByUserAndCategory(int(userID), int(categoryID))
+	users := record.GetByUserAndCategory(int(userID), int(categoryID))
 	if err != nil {
 		responses.Unprocessable(w, user.StructName)
 		return

@@ -2,11 +2,38 @@ package main
 
 import (
 	"fmt"
+	"lab1/db"
+	ds "lab1/db/db-setup"
 	"lab1/endpoints"
 	"log"
 	"net/http"
 	"os"
 )
+
+func init() {
+	fmt.Println("Removing latest...")
+	if ds.Clear() != nil {
+		fmt.Println("Unable to delete db")
+	}
+
+	fmt.Println("Connecting to db...")
+	con, err := db.Connect()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	fmt.Println("Migrating...")
+	err = ds.Migrate(con)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	fmt.Println("Creating default data...")
+	err = ds.CreateDefaultData(con)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+}
 
 func main() {
 	port := os.Getenv("PORT")
