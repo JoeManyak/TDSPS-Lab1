@@ -1,13 +1,13 @@
 package user
 
 import (
+	"fmt"
+	"lab1/db"
 	le "lab1/local-errors"
 	"lab1/models/category"
 	"lab1/models/record"
+	"os/user"
 )
-
-var idCount = 0
-var users []User
 
 const StructName = "user"
 
@@ -18,27 +18,51 @@ type User struct {
 	Categories []category.Category `gorm:"foreignKey:CreatedBy"`
 }
 
-func init() {
-	users = make([]User, 0, 10)
-}
+func Create(name string) (User, error) {
+	connect, err := db.Connect()
+	if err != nil {
+		return User{}, fmt.Errorf("create user on connect: %w", err)
+	}
 
-func Create(name string) {
-	users = append(users, User{
-		ID:   idCount,
+	u := User{
 		Name: name,
-	})
-	idCount++
+	}
+
+	tx := connect.Create(&u)
+	if tx.Error != nil {
+		return User{}, fmt.Errorf("create user: %w", err)
+	}
+
+	return u, nil
 }
 
-func GetAll() []User {
-	return users
+func GetAll() ([]User, error) {
+	var result []User
+
+	connect, err := db.Connect()
+	if err != nil {
+		return nil, fmt.Errorf("get users on connect: %w", err)
+	}
+
+	tx := connect.Model(user.User{}).Find(&result)
+	if tx.Error != nil {
+		return nil, fmt.Errorf("get users: %w", err)
+	}
+
+	return result, nil
 }
 
 func GetByID(id int) (User, error) {
-	for i := range users {
-		if users[i].ID == id {
-			return users[i], nil
-		}
+	connect, err := db.Connect()
+	if err != nil {
+		return User{}, fmt.Errorf("get user by id on connect: %w", err)
 	}
+
+	var u User
+	tx := connect.First(&u, id)
+	if tx.Error != nil {
+		return User{}, fmt.Errorf("get user by id: %w", err)
+	}
+
 	return User{}, le.NotFound(StructName)
 }

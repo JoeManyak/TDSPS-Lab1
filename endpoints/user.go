@@ -45,12 +45,22 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Create(u.Name)
+	u, err = user.Create(u.Name)
+	if err != nil {
+		responses.BadRequest(w, err)
+		return
+	}
 	responses.NoContent(w)
 }
 
 func UsersGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(user.GetAll())
+	all, err := user.GetAll()
+	if err != nil {
+		responses.Internal(w)
+		return
+	}
+
+	data, err := json.Marshal(all)
 	if err != nil {
 		responses.Internal(w)
 		return

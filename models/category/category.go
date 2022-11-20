@@ -14,7 +14,7 @@ type Category struct {
 	ID        int `gorm:"primaryKey"`
 	Name      string
 	Records   []record.Record `gorm:"foreignKey:CategoryID"`
-	CreatedBy int
+	CreatedBy int             `gorm:"default:null"`
 }
 
 func init() {

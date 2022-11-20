@@ -27,10 +27,22 @@ func Migrate(db *gorm.DB) error {
 }
 
 func CreateDefaultData(db *gorm.DB) error {
-	for _, v := range getDefaultUsers() {
-		tx := db.Create(&v)
-		if tx.Error != nil {
-			return tx.Error
+	var lines int64
+	if db.Model(&user.User{}).Count(&lines); lines == 0 {
+		for _, v := range getDefaultUsers() {
+			tx := db.Create(&v)
+			if tx.Error != nil {
+				return tx.Error
+			}
+		}
+	}
+
+	if db.Model(&category.Category{}).Count(&lines); lines == 0 {
+		for _, v := range getDefaultCategories() {
+			tx := db.Create(&v)
+			if tx.Error != nil {
+				return tx.Error
+			}
 		}
 	}
 	return nil
@@ -46,6 +58,17 @@ func getDefaultUsers() []user.User {
 		},
 		{
 			Name: "Leo",
+		},
+	}
+}
+
+func getDefaultCategories() []category.Category {
+	return []category.Category{
+		{
+			Name: "Default",
+		},
+		{
+			Name: "Premium",
 		},
 	}
 }
