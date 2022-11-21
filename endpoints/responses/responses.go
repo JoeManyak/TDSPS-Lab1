@@ -1,14 +1,21 @@
 package responses
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 )
 
-func OK(w http.ResponseWriter, data []byte) {
+func OK(w http.ResponseWriter, data interface{}) {
+	body, err := json.Marshal(data)
+	if err != nil {
+		Internal(w)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	_, err := w.Write(data)
+	_, err = w.Write(body)
 	if err != nil {
 		log.Fatalln(err.Error())
 		return
@@ -54,6 +61,15 @@ func UnprocessableDetailed(w http.ResponseWriter, structName string, additional 
 func NotFound(w http.ResponseWriter, errGet error) {
 	w.WriteHeader(http.StatusNotFound)
 	_, err := w.Write([]byte(errGet.Error()))
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+}
+
+func Forbidden(w http.ResponseWriter, err error) {
+	w.WriteHeader(http.StatusForbidden)
+	_, err = w.Write([]byte(err.Error()))
 	if err != nil {
 		log.Fatalln(err.Error())
 		return

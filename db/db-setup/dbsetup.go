@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"gorm.io/gorm"
 	"lab1/db"
-	"lab1/models/category"
-	"lab1/models/record"
-	"lab1/models/user"
+	"lab1/models/structs"
 	"os"
 )
 
@@ -16,9 +14,9 @@ func Clear() error {
 
 func Migrate(db *gorm.DB) error {
 	err := db.AutoMigrate(
-		&category.Category{},
-		&user.User{},
-		&record.Record{},
+		&structs.Category{},
+		&structs.User{},
+		&structs.Record{},
 	)
 	if err != nil {
 		return fmt.Errorf("migrate: %w", err)
@@ -28,7 +26,7 @@ func Migrate(db *gorm.DB) error {
 
 func CreateDefaultData(db *gorm.DB) error {
 	var lines int64
-	if db.Model(&user.User{}).Count(&lines); lines == 0 {
+	if db.Model(&structs.User{}).Count(&lines); lines == 0 {
 		for _, v := range getDefaultUsers() {
 			tx := db.Create(&v)
 			if tx.Error != nil {
@@ -37,7 +35,7 @@ func CreateDefaultData(db *gorm.DB) error {
 		}
 	}
 
-	if db.Model(&category.Category{}).Count(&lines); lines == 0 {
+	if db.Model(&structs.Category{}).Count(&lines); lines == 0 {
 		for _, v := range getDefaultCategories() {
 			tx := db.Create(&v)
 			if tx.Error != nil {
@@ -48,8 +46,8 @@ func CreateDefaultData(db *gorm.DB) error {
 	return nil
 }
 
-func getDefaultUsers() []user.User {
-	return []user.User{
+func getDefaultUsers() []structs.User {
+	return []structs.User{
 		{
 			Name: "Joe",
 		},
@@ -62,8 +60,8 @@ func getDefaultUsers() []user.User {
 	}
 }
 
-func getDefaultCategories() []category.Category {
-	return []category.Category{
+func getDefaultCategories() []structs.Category {
+	return []structs.Category{
 		{
 			Name: "Default",
 		},

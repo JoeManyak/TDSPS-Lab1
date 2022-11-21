@@ -5,8 +5,7 @@ import (
 	"io"
 	"lab1/endpoints/responses"
 	"lab1/models/category"
-	"lab1/models/user"
-	"log"
+	"lab1/models/structs"
 	"net/http"
 )
 
@@ -39,26 +38,27 @@ func CategoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var c category.Category
+	var c structs.Category
 	err = json.Unmarshal(body, &c)
 	if err != nil {
-		responses.Unprocessable(w, user.StructName)
+		responses.Unprocessable(w, structs.CategoryStructName)
 		return
 	}
 
-	category.Create(c.Name)
-	responses.NoContent(w)
+	cr, err := category.Create(c.Name, c.CreatedBy)
+	if err != nil {
+		return
+	}
+
+	responses.OK(w, cr)
 }
 
 func CategoriesGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(category.GetAll())
+	categories, err := category.GetAll()
 	if err != nil {
 		responses.Internal(w)
 		return
 	}
 
-	_, err = w.Write(data)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
+	responses.OK(w, categories)
 }

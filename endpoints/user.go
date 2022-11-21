@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"lab1/endpoints/responses"
+	"lab1/models/structs"
 	"lab1/models/user"
 	"log"
 	"net/http"
@@ -38,10 +39,10 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var u user.User
+	var u structs.User
 	err = json.Unmarshal(body, &u)
 	if err != nil {
-		responses.Unprocessable(w, user.StructName)
+		responses.Unprocessable(w, structs.UserStructName)
 		return
 	}
 
@@ -51,13 +52,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uRaw, err := json.Marshal(u)
-	if err != nil {
-		responses.Internal(w)
-		return
-	}
-
-	responses.OK(w, uRaw)
+	responses.OK(w, u)
 }
 
 func UsersGet(w http.ResponseWriter, _ *http.Request) {
