@@ -6,9 +6,9 @@ import (
 	"io"
 	"lab1/endpoints/responses"
 	le "lab1/local-errors"
-	"lab1/models"
+	rec "lab1/models/record"
+	"lab1/models/structs"
 	"lab1/models/user"
-	"log"
 	"net/http"
 	"time"
 )
@@ -68,39 +68,53 @@ func RecordCreate(w http.ResponseWriter, r *http.Request) {
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		responses.Unprocessable(w, models.StructName)
+		responses.Unprocessable(w, structs.RecordStructName)
 		return
 	}
 
-	c, err := models.Parse(data)
+	c, err := rec.Parse(data)
 	if err != nil {
-		responses.UnprocessableDetailed(w, models.StructName, err.Error())
+		responses.UnprocessableDetailed(w, structs.RecordStructName, err.Error())
 		return
 	}
 
-	err = models.Create(c.UserID, c.CategoryID, time.Now(), c.Sum)
+	u, err := user.GetByID(c.UserID)
 	if err != nil {
+		responses.BadRequest(w, err)
+		return
+	}
+
+	if user.Equal(u, structs.User{}) {
+		responses.NotFound(w, errors.New("no such user"))
+		return
+	}
+
+	re, err := rec.Create(c.UserID, c.CategoryID, time.Now(), c.Sum)
+	if err != nil {
+		if errors.Is(err, structs.ForbiddenCategory) {
+			responses.Forbidden(w, err)
+			return
+		}
 		if errors.Is(err, le.NotFoundError) {
 			responses.NotFound(w, err)
 			return
 		}
+
 		responses.BadRequest(w, err)
 		return
 	}
-	responses.NoContent(w)
+
+	responses.OK(w, re)
 }
 
 func RecordsGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(models.GetAll())
+	records, err := rec.GetAll()
 	if err != nil {
 		responses.Internal(w)
 		return
 	}
 
-	_, err = w.Write(data)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
+	responses.OK(w, records)
 }
 
 func RecordsGetByUser(w http.ResponseWriter, r *http.Request) {
@@ -123,17 +137,13 @@ func RecordsGetByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := models.GetByUser(int(id))
-	data, err := json.Marshal(users)
+	users, err := rec.GetByUser(int(id))
 	if err != nil {
-		responses.Internal(w)
+		responses.NotFound(w, err)
 		return
 	}
 
-	_, err = w.Write(data)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
+	responses.OK(w, users)
 }
 
 func RecordsGetByUserCategory(w http.ResponseWriter, r *http.Request) {
@@ -162,20 +172,11 @@ func RecordsGetByUserCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := models.GetByUserAndCategory(int(userID), int(categoryID))
+	users, err := rec.GetByUserAndCategory(int(userID), int(categoryID))
 	if err != nil {
-		responses.Unprocessable(w, user.StructName)
+		responses.NotFound(w, err)
 		return
 	}
 
-	data, err := json.Marshal(users)
-	if err != nil {
-		responses.Internal(w)
-		return
-	}
-
-	_, err = w.Write(data)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
+	responses.OK(w, users)
 }

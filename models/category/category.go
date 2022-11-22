@@ -1,38 +1,61 @@
 package category
 
-import le "lab1/local-errors"
+import (
+	"fmt"
+	"lab1/db"
+	"lab1/models/structs"
+)
 
-var idCount = 0
-var categories []Category
-
-const StructName = "category"
-
-type Category struct {
-	ID   int
-	Name string
-}
-
-func init() {
-	categories = make([]Category, 0, 10)
-}
-
-func Create(name string) {
-	categories = append(categories, Category{
-		ID:   idCount,
-		Name: name,
-	})
-	idCount++
-}
-
-func GetAll() []Category {
-	return categories
-}
-
-func GetByID(id int) (Category, error) {
-	for i := range categories {
-		if categories[i].ID == id {
-			return categories[i], nil
-		}
+func Parse(data map[string]any) (structs.Category, bool) {
+	c := structs.Category{
+		Name:      "",
+		CreatedBy: 0,
 	}
-	return Category{}, le.NotFound(StructName)
+	if name, ok := data["name"].(string); ok {
+		c.Name = name
+	} else {
+		return structs.Category{}, false
+	}
+
+	if createdBy, ok := data["created_by"].(float64); ok {
+		c.CreatedBy = int(createdBy)
+	} else {
+		return structs.Category{}, false
+	}
+	return c, true
+}
+
+func Create(name string, id int) (structs.Category, error) {
+	connect, err := db.Connect()
+	if err != nil {
+		return structs.Category{}, fmt.Errorf("create category on connect: %w", err)
+	}
+
+	c := structs.Category{
+		Name:      name,
+		CreatedBy: id,
+	}
+
+	tx := connect.Create(&c)
+	if tx.Error != nil {
+		return structs.Category{}, fmt.Errorf("create category: %w", tx.Error)
+	}
+
+	return c, nil
+}
+
+func GetAll() ([]structs.Category, error) {
+	var result []structs.Category
+
+	connect, err := db.Connect()
+	if err != nil {
+		return nil, fmt.Errorf("get categories on connect: %w", err)
+	}
+
+	tx := connect.Model(structs.Category{}).Find(&result)
+	if tx.Error != nil {
+		return nil, fmt.Errorf("get categories: %w", err)
+	}
+
+	return result, nil
 }
