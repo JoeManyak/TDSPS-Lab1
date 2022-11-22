@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"lab1/endpoints/responses"
 	"lab1/models/structs"
@@ -43,6 +44,11 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &u)
 	if err != nil {
 		responses.Unprocessable(w, structs.UserStructName)
+		return
+	}
+
+	if u.Name == "" {
+		responses.BadRequest(w, errors.New("name cannot be empty"))
 		return
 	}
 

@@ -59,9 +59,9 @@ func main() {
 	//endpoint to get access to full list of record
 	http.HandleFunc("/records/", endpoints.Records)
 	//endpoint to get access to full list of record filtered by user id
-	http.HandleFunc("/records/user", endpoints.RecordsByUser)
+	http.HandleFunc("/records/user/", endpoints.RecordsByUser)
 	//endpoint to get access to full list of record filtered by user id and category id
-	http.HandleFunc("/records/user/category", endpoints.RecordsByUserCategory)
+	http.HandleFunc("/records/user/category/", endpoints.RecordsByUserCategory)
 
 	log.Printf("Starting server at port: %s\n", port)
 	err := http.ListenAndServe(":"+port, nil)

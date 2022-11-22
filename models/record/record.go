@@ -79,7 +79,9 @@ func GetByUser(id int) ([]structs.Record, error) {
 		return nil, fmt.Errorf("get records by user on connect: %w", err)
 	}
 
-	tx := connect.Model(structs.Record{}).Where(&structs.Record{UserID: id}).Find(&result)
+	tx := connect.
+		Where(&structs.Record{UserID: id}).
+		Find(&result)
 	if tx.Error != nil {
 		return nil, fmt.Errorf("get records by user: %w", err)
 	}
@@ -95,7 +97,9 @@ func GetByUserAndCategory(userID, categoryID int) ([]structs.Record, error) {
 		return nil, fmt.Errorf("get records by user on connect: %w", err)
 	}
 
-	tx := connect.Model(structs.Record{}).Where(&structs.Record{UserID: userID, CategoryID: categoryID}).Find(&result)
+	tx := connect.
+		Where(&structs.Record{UserID: userID, CategoryID: categoryID}).
+		Find(&result)
 	if tx.Error != nil {
 		return nil, fmt.Errorf("get records by user: %w", err)
 	}
@@ -111,7 +115,7 @@ func checkCategory(connect *gorm.DB, userID, categoryID int) bool {
 		Where("id = ? AND (created_by = ? OR created_by = NULL)", categoryID, userID).
 		Find(&c)
 
-	if c.ID != categoryID || tx.Error != nil {
+	if c.Name == "" || tx.Error != nil {
 		return false
 	}
 

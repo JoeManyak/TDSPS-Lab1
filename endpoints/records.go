@@ -8,6 +8,7 @@ import (
 	le "lab1/local-errors"
 	rec "lab1/models/record"
 	"lab1/models/structs"
+	"lab1/models/user"
 	"net/http"
 	"time"
 )
@@ -74,6 +75,17 @@ func RecordCreate(w http.ResponseWriter, r *http.Request) {
 	c, err := rec.Parse(data)
 	if err != nil {
 		responses.UnprocessableDetailed(w, structs.RecordStructName, err.Error())
+		return
+	}
+
+	u, err := user.GetByID(c.UserID)
+	if err != nil {
+		responses.BadRequest(w, err)
+		return
+	}
+
+	if user.Equal(u, structs.User{}) {
+		responses.NotFound(w, errors.New("no such user"))
 		return
 	}
 

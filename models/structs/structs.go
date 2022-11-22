@@ -32,8 +32,8 @@ var ForbiddenCategory = errors.New("cannot use such category")
 type Category struct {
 	ID        int `gorm:"primaryKey"`
 	Name      string
-	CreatedBy int      `gorm:"default:null"`
-	Records   []Record `gorm:"foreignKey:CategoryID"`
+	CreatedBy int      `json:",omitempty" gorm:"default:null"`
+	Records   []Record `json:",omitempty" gorm:"foreignKey:CategoryID"`
 }
 
 const CategoryStructName = "category"

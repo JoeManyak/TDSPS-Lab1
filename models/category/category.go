@@ -6,6 +6,25 @@ import (
 	"lab1/models/structs"
 )
 
+func Parse(data map[string]any) (structs.Category, bool) {
+	c := structs.Category{
+		Name:      "",
+		CreatedBy: 0,
+	}
+	if name, ok := data["name"].(string); ok {
+		c.Name = name
+	} else {
+		return structs.Category{}, false
+	}
+
+	if createdBy, ok := data["created_by"].(float64); ok {
+		c.CreatedBy = int(createdBy)
+	} else {
+		return structs.Category{}, false
+	}
+	return c, true
+}
+
 func Create(name string, id int) (structs.Category, error) {
 	connect, err := db.Connect()
 	if err != nil {
