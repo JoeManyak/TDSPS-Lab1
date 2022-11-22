@@ -2,8 +2,10 @@ package endpoints
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"lab1/endpoints/responses"
+	"lab1/models/structs"
 	"lab1/models/user"
 	"log"
 	"net/http"
@@ -38,19 +40,35 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var u user.User
+	var u structs.User
 	err = json.Unmarshal(body, &u)
 	if err != nil {
-		responses.Unprocessable(w, user.StructName)
+		responses.Unprocessable(w, structs.UserStructName)
 		return
 	}
 
-	user.Create(u.Name)
-	responses.NoContent(w)
+	if u.Name == "" {
+		responses.BadRequest(w, errors.New("name cannot be empty"))
+		return
+	}
+
+	u, err = user.Create(u.Name)
+	if err != nil {
+		responses.BadRequest(w, err)
+		return
+	}
+
+	responses.OK(w, u)
 }
 
 func UsersGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(user.GetAll())
+	all, err := user.GetAll()
+	if err != nil {
+		responses.Internal(w)
+		return
+	}
+
+	data, err := json.Marshal(all)
 	if err != nil {
 		responses.Internal(w)
 		return

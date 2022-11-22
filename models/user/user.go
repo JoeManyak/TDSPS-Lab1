@@ -1,38 +1,61 @@
 package user
 
-import le "lab1/local-errors"
+import (
+	"fmt"
+	"lab1/db"
+	"lab1/models/structs"
+)
 
-var idCount = 0
-var users []User
-
-const StructName = "user"
-
-type User struct {
-	ID   int
-	Name string
-}
-
-func init() {
-	users = make([]User, 0, 10)
-}
-
-func Create(name string) {
-	users = append(users, User{
-		ID:   idCount,
-		Name: name,
-	})
-	idCount++
-}
-
-func GetAll() []User {
-	return users
-}
-
-func GetByID(id int) (User, error) {
-	for i := range users {
-		if users[i].ID == id {
-			return users[i], nil
-		}
+func Create(name string) (structs.User, error) {
+	connect, err := db.Connect()
+	if err != nil {
+		return structs.User{}, fmt.Errorf("create user on connect: %w", err)
 	}
-	return User{}, le.NotFound(StructName)
+
+	u := structs.User{
+		Name: name,
+	}
+
+	tx := connect.Create(&u)
+	if tx.Error != nil {
+		return structs.User{}, fmt.Errorf("create user: %w", tx.Error)
+	}
+
+	return u, nil
+}
+
+func GetAll() ([]structs.User, error) {
+	var result []structs.User
+
+	connect, err := db.Connect()
+	if err != nil {
+		return nil, fmt.Errorf("get users on connect: %w", err)
+	}
+
+	tx := connect.Model(structs.User{}).Find(&result)
+	if tx.Error != nil {
+		return nil, fmt.Errorf("get users: %w", err)
+	}
+
+	return result, nil
+}
+
+func Equal(u1, u2 structs.User) bool {
+	return u1.ID == u2.ID && u1.Name == u2.Name
+}
+
+func GetByID(id int) (structs.User, error) {
+	var result structs.User
+
+	connect, err := db.Connect()
+	if err != nil {
+		return structs.User{}, fmt.Errorf("get user by id on connect: %w", err)
+	}
+
+	tx := connect.Model(result).Where(structs.User{ID: id}).Find(&result)
+	if tx.Error != nil {
+		return result, fmt.Errorf("get user by id: %w", err)
+	}
+
+	return result, nil
 }

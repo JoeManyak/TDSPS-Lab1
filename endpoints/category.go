@@ -2,11 +2,12 @@ package endpoints
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"lab1/endpoints/responses"
 	"lab1/models/category"
+	"lab1/models/structs"
 	"lab1/models/user"
-	"log"
 	"net/http"
 )
 
@@ -39,26 +40,49 @@ func CategoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var c category.Category
-	err = json.Unmarshal(body, &c)
+	var raw map[string]any
+	err = json.Unmarshal(body, &raw)
 	if err != nil {
-		responses.Unprocessable(w, user.StructName)
+		responses.Unprocessable(w, structs.CategoryStructName)
 		return
 	}
 
-	category.Create(c.Name)
-	responses.NoContent(w)
+	parsed, ok := category.Parse(raw)
+	if !ok {
+		responses.Unprocessable(w, structs.CategoryStructName)
+		return
+	}
+
+	u, err := user.GetByID(parsed.CreatedBy)
+	if err != nil {
+		responses.BadRequest(w, err)
+		return
+	}
+
+	if user.Equal(u, structs.User{}) {
+		responses.NotFound(w, errors.New("no such user"))
+		return
+	}
+
+	if parsed.Name == "" {
+		responses.BadRequest(w, errors.New("name cannot be empty"))
+		return
+	}
+
+	cr, err := category.Create(parsed.Name, parsed.CreatedBy)
+	if err != nil {
+		return
+	}
+
+	responses.OK(w, cr)
 }
 
 func CategoriesGet(w http.ResponseWriter, _ *http.Request) {
-	data, err := json.Marshal(category.GetAll())
+	categories, err := category.GetAll()
 	if err != nil {
 		responses.Internal(w)
 		return
 	}
 
-	_, err = w.Write(data)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
+	responses.OK(w, categories)
 }
