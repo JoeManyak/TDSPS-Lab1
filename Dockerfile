@@ -4,6 +4,7 @@ WORKDIR /tmp/service
 
 ADD . .
 
+RUN go mod tidy
 RUN go build -o ./out/app .
 
 FROM alpine:latest
