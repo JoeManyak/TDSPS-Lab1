@@ -1,3 +1,4 @@
+### Variant 2
 # How to deploy app
 ### via Golang:
 Requirments:
