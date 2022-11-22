@@ -34,7 +34,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": 0\n}",
+					"raw": "{\n    \"user_id\": 2\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -65,7 +65,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": 0,\n    \"category_id\":1 \n}",
+					"raw": "{\n    \"user_id\": 1,\n    \"category_id\":1 \n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -73,14 +73,15 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/records/user/category",
+					"raw": "{{base_url}}/records/user/category/",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"records",
 						"user",
-						"category"
+						"category",
+						""
 					]
 				}
 			},
@@ -93,7 +94,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"record\",\n    \"user_id\": 0,\n    \"category_id\": 0,\n    \"sum\": 200\n}",
+					"raw": "{\n    \"name\": \"record\",\n    \"user_id\": 2,\n    \"category_id\": 0,\n    \"sum\": 200\n}",
 					"options": {
 						"raw": {
 							"language": "json"

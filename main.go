@@ -10,12 +10,6 @@ import (
 )
 
 func init() {
-	/*	log.Println("Removing latest...")
-		if ds.Clear() != nil {
-			log.Println("![WARN]! Unable to delete db")
-		}
-	*/
-
 	log.Println("Connecting to db...")
 	con, err := db.Connect()
 	if err != nil {
