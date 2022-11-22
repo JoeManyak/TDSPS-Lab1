@@ -1,10 +1,10 @@
 FROM golang:alpine as build_base
+RUN apk add build-base
 
 WORKDIR /tmp/service
 
 ADD . .
 
-RUN go mod tidy
 RUN go build -o ./out/app .
 
 FROM alpine:latest
